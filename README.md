@@ -103,7 +103,7 @@ Conditions
     3. Phase Number
     4. Highest Number of Cities
     5. Number of Players
-    5. Current Player
+    6. Current Player
 #### Functions
 
 ###2. Player
