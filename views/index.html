@@ -1,11 +1,67 @@
 <html>
 	<head>
+		<script type="text/javascript" src="/js/jquery-3.1.1.js"></script>
+		<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+
 		<script type="text/javascript" src="/js/Game.js"></script>
 		<script type="text/javascript" src="/js/main.js"></script>
 		
-		<style type="text/css">
-		</style>
+		<link href="/css/bootstrap.min.css" rel="stylesheet">
 	</head>
-	<body>
+	<body onload="initView()">
+		<div class="container">
+			<h1>Project Hawker</h1>
+			
+			<!-- Game and Currrent Player -->
+			<div class=row>
+				<div class="col-sm-7">
+					<h2>Game</h2>
+					<table class="table">
+						<tr>
+							<td>Number of Players</td>
+							<td id="nPlayers"></td>
+						</tr>
+						<tr>
+							<td>Round</td>
+							<td id="round"></td>
+						</tr>
+						<tr>
+							<td>Step</td>
+							<td id="step"></td>
+						</tr>
+						<tr>
+							<td>Phase</td>
+							<td id="phase"></td>
+						</tr>
+					</table>
+				</div>
+				<div class="col-sm-5">
+					<h2>Current Player</h1>
+					<table class="table">
+						<tr>
+							<td>Name</td>
+							<td id="playerName"></td>
+						</tr>
+						<tr>
+							<td>Money</td>
+							<td id="playerMoney"></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<button onclick="next()">Next</button>
+
+			<!-- Stalls  -->
+			<div class="row">
+			</div>
+
+			<!-- Resources  -->
+			<div class="row">
+			</div>
+
+			<!-- Cities  -->
+			<div class="row">
+			</div>
+		</div>
 	</body>
 </html>

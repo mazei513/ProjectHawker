@@ -50,9 +50,11 @@ Usage
 ## High Level Design
 1. Create Game
 2. Create Players
-3. while loop with state machine inside (exit condition -> when max number of cities >= 17)
+3. Game starts
 4. Calculate Player/Players with highest number of powered cities
 5. if more than one player, calculate money
+
+Using
 
 ##State Machine
 ###Step 1. Determine turn order

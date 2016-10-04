@@ -11,6 +11,11 @@ handlers:
 - url: /js
   mime_type: text/javascript
   static_dir: js
+- url: /css
+  mime_type: text/css
+  static_dir: css
+- url: /fonts
+  static_dir: fonts
 
 - url: .*
   script: main.app
