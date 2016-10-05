@@ -1,13 +1,14 @@
-// Game of 4 Players
-var n = 4;
-var game = new Game(n);
 
-// List of Players in Game
+var n = 4;
 var players = [];
 for (var i = 0; i < n; i++) {
-	var newPlayer = new Player(i);
+	var playerName = "Player " + (i+1).toString();
+	var newPlayer = new Player(playerName, i);
 	players.push(newPlayer);
 }
+
+// Game of 4 Players
+var game = new Game(n, players);
 
 // Populate HTML
 function initView() {
@@ -52,9 +53,16 @@ function next() {
 	switch(game.step) {
 		// Determine Turn Order
 		case 0:
+			if (game.round == 0) {
+				game.nextStep();
+			}
+			else {
+				players = game.sort(players);
+			}
 			break;
 		// Auction Stalls
 		case 1:
+			// startAuction
 			break;
 		// Buy Resources
 		case 2:
@@ -68,8 +76,5 @@ function next() {
 		default:
 			break;
 	}
-
-	// game.newStep();
-	// game.newRound();
-	// updateView();
+	updateView();
 }

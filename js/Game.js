@@ -1,34 +1,88 @@
 /***********************************/
 // Game
-function Game(n) {
+function Game(n, players) {
 	this.round = 0;
 	this.step = 0;
 	this.phase = 1;
+	
 	this.maxCities = 0;
-	this.nPlayers = n;
+	
 	this.currentPlayer = 0;
+	this.players = players;
 }
 
 Game.prototype.newRound = function() {
 	this.round++;
 }
-Game.prototype.newStep = function() {
+
+Game.prototype.nextStep = function() {
 	this.step++;
 	this.step %= 5;
+}
+
+Game.prototype.sortPlayers = function(players) {
+	return players.sort(function(a,b) {
+		return parseFloat(b.cities.length) - parseFloat(a.cities.length);
+	});
+}
+
+Game.prototype.startAuction = function() {
+	// ((Incomplete))
+}
+
+Game.prototype.endAuction = function() {
+	// ((Incomplete))
 }
 
 Game.prototype.updateMaxCities = function(players) {
 	//((Incomplete))
 	this.maxCities += 1;
 }
+
 /***********************************/
 // Player ((Incomplete))
-function Player(name) {
+function Player(name, id) {
 	this.name = name;
 	this.money = 50;
+	this.id = id;
+	this.cities = [];
 }
-/***********************************/
 
+Player.prototype.addCity = function(city) {
+	this.cities.push(city);
+}
+
+/***********************************/
+// Cities ((Incomplete))
+function City(name) {
+	this.name = name;
+}
+
+/***********************************/
+// Auction ((Incomplete))
+function Auction(station, players, masterBidder) {
+	// this.station =  station;
+	this.players = players;
+	this.latestBid = 0;
+	this.bidder = new Player();
+	this.masterBidder = masterBidder;
+}
+
+Auction.prototype.bid = function(bid, player) {
+	if (bid > this.latestBid) {
+		this.latestBid = bid;
+		this.bidder = player;
+	}
+}
+
+Auction.prototype.pass = function(player) {
+	var index = this.players.indexOf(player);
+	if (index > -1) {
+		array.splice(index, 1);
+	}
+}
+
+/***********************************/
 // Custom array copy function needed due to having array of objects
 function arrayCopy(o) {
    var output, v, key;
