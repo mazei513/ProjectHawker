@@ -7,8 +7,8 @@ function Game(n, players) {
 	
 	this.maxCities = 0;
 	
-	this.currentPlayer = 0;
-	this.players = players;
+	this.currentPlayerIndex = 0;
+	this.players = arrayCopy(players);
 }
 
 Game.prototype.newRound = function() {
@@ -26,17 +26,16 @@ Game.prototype.sortPlayers = function(players) {
 	});
 }
 
-Game.prototype.startAuction = function() {
-	// ((Incomplete))
-}
+// Game.prototype.startAuction = function() {
+// 	// ((Incomplete))
+// }
 
-Game.prototype.endAuction = function() {
-	// ((Incomplete))
-}
+// Game.prototype.endAuction = function() {
+// 	// ((Incomplete))
+// }
 
 Game.prototype.updateMaxCities = function(players) {
 	//((Incomplete))
-	this.maxCities += 1;
 }
 
 /***********************************/
@@ -61,24 +60,31 @@ function City(name) {
 /***********************************/
 // Auction ((Incomplete))
 function Auction(station, players, masterBidder) {
-	// this.station =  station;
-	this.players = players;
+	this.station =  station;
+	this.players = arrayCopy(players);
 	this.latestBid = 0;
-	this.bidder = new Player();
+	this.bidderIndex = -1;
+	this.bidder = new Player()
 	this.masterBidder = masterBidder;
+	this.currentBidderIndex = 0;
 }
 
-Auction.prototype.bid = function(bid, player) {
-	if (bid > this.latestBid) {
-		this.latestBid = bid;
-		this.bidder = player;
+Auction.prototype.bid = function(amount) {
+	if (amount > this.latestBid) {
+		this.latestBid = amount;
+		this.bidderIndex = this.currentBidderIndex;
+		this.bidder = this.players[this.currentBidderIndex];
+		this.currentBidderIndex++;
+		this.currentBidderIndex %= this.players.length;
 	}
 }
 
-Auction.prototype.pass = function(player) {
-	var index = this.players.indexOf(player);
+Auction.prototype.pass = function() {
+	var index = this.currentBidderIndex;
 	if (index > -1) {
 		array.splice(index, 1);
+		this.currentBidderIndex++;
+		this.currentBidderIndex %= this.players.length;
 	}
 }
 
@@ -100,10 +106,12 @@ function Station(price, upkeepResource, upkeepCost, production) {
 	this.upkeepResource = upkeepResource;
 	this.upkeepCost = upkeepCost;
 	this.production = production;
+	this.id = stationIdCounter++;
 }
 
 // Global StationMarket List
 // Placeholder example stations entered in list
+var stationIdCounter = 0;
 var StationMarketList = [	new Station(3, 'Noodle', 2, 1),
 							new Station(4, 'Rice', 2, 1),
 							new Station(5, 'Chicken', 1, 1),
@@ -118,6 +126,7 @@ var StationMarketList = [	new Station(3, 'Noodle', 2, 1),
 // StationMarket class
 class StationMarket {
 	constructor() {
+		this.allStations = arrayCopy(StationMarketList);
 		this.StationDeck = arrayCopy(StationMarketList);
 		this.currentMarket = this.StationDeck.splice(0, 4);
 		this.futureMarket = this.StationDeck.splice(0, 4);
