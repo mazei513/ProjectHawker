@@ -52,10 +52,13 @@ function updateView() {
 	
 	$("#phase").html(game.phase);
 
+	displayPlayer(players[game.currentPlayerIndex]);
+}
+
+function displayPlayer(player) {
 	// Player
-	var tmpPlayer = players[game.currentPlayerIndex];
-	$("#playerName").html(tmpPlayer.name);
-	$("#playerMoney").html(tmpPlayer.money);
+	$("#playerName").html(player.name);
+	$("#playerMoney").html(player.money);
 }
 
 // 'State Machine'
@@ -70,6 +73,11 @@ function startGame() {
 		players = game.sort(players);
 	}
 
+	showMarket();
+	updateView();
+}
+
+function showMarket() {
 	// Show the station cards
 	$("#marketSection").show();
 
@@ -77,8 +85,7 @@ function startGame() {
 	var stations = stationMarket.currentMarket;
 	var html = "";
 	for (var i = 0; i < stations.length; i++) {
-		console.log(stations[i]);
-		html += generateHTML(stations[i]);
+		html += generateStationCardHTML(stations[i]);
 	}
 	$("#currentMarket").html(html);
 
@@ -86,16 +93,13 @@ function startGame() {
 	stations = stationMarket.futureMarket;
 	html = "";
 	for (var i = 0; i < stations.length; i++) {
-		console.log(stations[i]);
-		html += generateHTML(stations[i]);
+		html += generateStationCardHTML(stations[i]);
 	}
 	$("#futureMarket").html(html);
-
-	updateView();
 }
 
 // Create HTML for Station
-function generateHTML(station) {
+function generateStationCardHTML(station) {
 	var stationPriceBadgeHTML = "<h4 class='stationPriceBadge'>" + station.price.toString() + "</h4>";
 	var resourcesHTML = "<p id='stationUpkeep'>Resources Needed : " +station.upkeepResource + " x" + station.upkeepCost.toString() + "</p>"
 	var productionHTML = "<p id='stationProduction'>Production : " +station.production.toString() + "</p>"
@@ -125,29 +129,80 @@ function generateHTML(station) {
 var currentAuction;
 function startAuction(stationID) {
 	var chosenStation = stationMarket.allStations[stationID];
-	var html = generateHTML(chosenStation);
+	var html = generateStationCardHTML(chosenStation);
 
 	$("#marketSection").hide();
+
+	// Create Auction Section
+	createAuctionSectionHTML(chosenStation);
 	$("#auctionSection").show();
 
 	currentAuction = new Auction(chosenStation, players, players[0]);
 }
 
+function createAuctionSectionHTML(station) {
+	var html = generateStationCardHTML(station);
+	var price = station.price;
+	var bidHTML = "\
+		<div class='col-sm-6 col-md-8'> \
+			<h4 style='text-align: center;'>Current Bid</h4> \
+			<h3 style='text-align: center' id='latestBidAmount'>" + price + "</h3> \
+			<h4 style='text-align: center; font-style: italic;' id='bidderName'>(N/A)</h4> \
+			<form class='form'> \
+				<div class='form-group'> \
+				<label for='bidAmount'>Your Bid Amount</label> \
+				<input type='number' class='form-control' id='bidAmount' min=" + price + " value=" + price + "> \
+				</div> \
+				<div class='row'> \
+					<div class='col-xs-6'> \
+						<button class='btn btn-success' type='button' onclick='placeBid()' style='width:100%;'>Confirm</button> \
+					</div> \
+					<div class='col-xs-6'> \
+						<button class='btn btn-danger' type='button' onclick='passBid()' style='width:100%;'>Pass</button> \
+					</div> \
+				</div> \
+			</form> \
+		</div> \
+	";
+
+	$("#auctionStationCard").html(html+bidHTML);
+}
+
+
 function placeBid() {
 	var amount = parseInt($("#bidAmount").val());
 	currentAuction.bid(amount);
-	
-	game.currentPlayerIndex = currentAuction.currentBidderIndex;// TO BE MODIFIED TO PLACE INCREMENT AS PART OF FUNCTION
+
 
 	$("#latestBidAmount").html(currentAuction.latestBid);
 	$("#bidAmount").val(currentAuction.latestBid+1);
 	$("#bidAmount").attr('min', currentAuction.latestBid+1);
 	$("#bidderName").html(currentAuction.bidder.name);
 	updateView();
+	displayPlayer(currentAuction.players[currentAuction.currentBidderIndex]);
 }
 
-function passBid() {
+function passBid()
+ {
 
+	currentAuction.pass();
+	updateView();
+	displayPlayer(currentAuction.players[currentAuction.currentBidderIndex]);
+
+	if (currentAuction.players.length == 1) {
+		console.log("AUCTION WON");
+		
+		// remove from current market
+		stationMarket.removeStationFromCurrentMarket(currentAuction.station);
+
+		// Add station to player
+		var playerID = currentAuction.players[0].id;
+		players[playerID].addStation(currentAuction.station);
+		players[playerID].money -= currentAuction.latestBid; // TO BE MODIFIED TO PLACE INCREMENT AS PART OF FUNCTION
+
+		$("#auctionSection").hide();
+		showMarket();
+	}
 }
 
 // Disable submit form when enter pressed

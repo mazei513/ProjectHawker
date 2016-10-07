@@ -45,6 +45,11 @@ function Player(name, id) {
 	this.money = 50;
 	this.id = id;
 	this.cities = [];
+	this.stations = [];
+}
+
+Player.prototype.addStation = function(station) {
+	this.stations.push(station)
 }
 
 Player.prototype.addCity = function(city) {
@@ -82,8 +87,7 @@ Auction.prototype.bid = function(amount) {
 Auction.prototype.pass = function() {
 	var index = this.currentBidderIndex;
 	if (index > -1) {
-		array.splice(index, 1);
-		this.currentBidderIndex++;
+		this.players.splice(index, 1);
 		this.currentBidderIndex %= this.players.length;
 	}
 }
@@ -150,4 +154,20 @@ class StationMarket {
 	deckCount() {
 		return this.StationDeck.length;
 	}
+
+	removeStationFromCurrentMarket(station) {
+		var result = this.currentMarket.filter(function( obj ) {
+			return obj.id == station.id;
+		});
+
+		console.log(result[0]);
+
+
+		var index = this.currentMarket.indexOf(result[0])
+		console.log(index);
+		if (index > -1) {
+			this.currentMarket.splice(index, 1);
+		}
+	}
+
 }
