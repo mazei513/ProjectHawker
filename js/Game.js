@@ -154,6 +154,19 @@ class StationMarket {
 	deckCount() {
 		return this.StationDeck.length;
 	}
+	
+	marketCheck() {
+		if(this.currentMarket.length < 4 || this.futureMarket.length < 4) {
+			var tempMarketArray = this.currentMarket.concat(this.futureMarket)
+			while(tempMarketArray.length < 8) {
+				tempMarketArray = tempMarketArray.concat(this.drawCard());
+			}
+			
+			tempMarketArray.sort(function(a,b) {
+				return parseFloat(a.price) - parseFloat(b.price);
+			});
+		}
+	}
 
 	removeStationFromCurrentMarket(station) {
 		var result = this.currentMarket.filter(function( obj ) {
