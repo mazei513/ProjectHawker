@@ -134,6 +134,7 @@ class StationMarket {
 		this.StationDeck = arrayCopy(StationMarketList);
 		this.currentMarket = this.StationDeck.splice(0, 4);
 		this.futureMarket = this.StationDeck.splice(0, 4);
+		this.p3Market = [];
 	}
 	
 	// Resets the deck
@@ -159,13 +160,31 @@ class StationMarket {
 		if(this.currentMarket.length < 4 || this.futureMarket.length < 4) {
 			var tempMarketArray = this.currentMarket.concat(this.futureMarket)
 			while(tempMarketArray.length < 8) {
-				tempMarketArray = tempMarketArray.concat(this.drawCard());
+				if(this.deckCount() > 0) {
+					tempMarketArray = tempMarketArray.concat(this.drawCard());
+				}
+				else {
+					// I'm not sure how to do error catching in JS =D
+				}
 			}
 			
 			tempMarketArray.sort(function(a,b) {
 				return parseFloat(a.price) - parseFloat(b.price);
 			});
+			
+			this.currentMarket = tempMarketArray.splice(0,4);
+			this.futureMarket = tempMarketArray.splice(0,4);
+			console.log(this.currentMarket);
+			console.log(this.futureMarket);
 		}
+	}
+	
+	add2P3Market() {
+		this.p3Market.push(this.futureMarket[this.futureMarket.length-1]);
+		this.futureMarket.pop();
+		this.marketCheck();
+		console.log(this.futureMarket);
+		console.log(this.p3Market);
 	}
 
 	removeStationFromCurrentMarket(station) {
@@ -181,6 +200,8 @@ class StationMarket {
 		if (index > -1) {
 			this.currentMarket.splice(index, 1);
 		}
+		
+		this.marketCheck();
 	}
 
 }
