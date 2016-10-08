@@ -105,6 +105,8 @@ Conditions
     5. Number of Players
     5. Current Player
 #### Functions
+    1. nextStep
+        - moves the game to the next step (eg: bidding for stations --> buying resources)
 
 ###2. Player
 #### Variables
@@ -114,6 +116,7 @@ Conditions
     4. Resources
     5. Cities
     6. OutputQuantity
+    7. ID
 #### Functions
 
 ###3. Station
@@ -147,4 +150,21 @@ Conditions
     2. Neighbours (Array of Cities and Setup Cost)
         - ie: [[SS15, 10], [PJ, 5]]
 
-README v1.0
+###8. Auction
+#### Variables
+    1. Station
+    2. Latest Bid
+    3. Bidder (of latest bid)
+    4. Master Bidder (ie: first bidder of each auction)
+#### Functions
+    1. bid
+        - current bidder places a bid in the auction
+        - input 
+            - bid amount
+            - bidder
+    2. pass
+        - removes current bidder from auction
+        - input
+            - bidder
+
+README v1.1 (ASJW)
