@@ -164,6 +164,7 @@ class StationMarket {
 		return this.p3Market.length;
 	}
 	
+	p3Transition() {
 		// function to transition the market from phase 2 to phase 3
 		this.currentMarket = this.currentMarket.concat(this.futureMarket);
 		this.futureMarket = [];
