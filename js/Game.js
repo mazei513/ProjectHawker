@@ -20,6 +20,10 @@ Game.prototype.nextStep = function() {
 	this.step %= 5;
 }
 
+Game.prototype.setPhase = function(phase) {
+	this.phase = phase;
+}
+
 Game.prototype.sortPlayers = function(players) {
 	return players.sort(function(a,b) {
 		return parseFloat(b.cities.length) - parseFloat(a.cities.length);
@@ -152,30 +156,69 @@ class StationMarket {
 		return this.StationDeck.splice(card, 1);
 	}
 	
-	deckCount() {
+	stationDeckCount() {
 		return this.StationDeck.length;
 	}
 	
-	marketCheck() {
-		if(this.currentMarket.length < 4 || this.futureMarket.length < 4) {
-			var tempMarketArray = this.currentMarket.concat(this.futureMarket)
-			while(tempMarketArray.length < 8) {
-				if(this.deckCount() > 0) {
-					tempMarketArray = tempMarketArray.concat(this.drawCard());
+	p3MarketDeckCount() {
+		return this.p3Market.length;
+	}
+	
+		// function to transition the market from phase 2 to phase 3
+		this.currentMarket = this.currentMarket.concat(this.futureMarket);
+		this.futureMarket = [];
+		
+		while(this.currentMarket.length > 6) {
+			this.currentMarket.pop();
+		}
+		
+		Game.setPhase(3);
+	}
+	
+	marketCheck(Game) {
+		if(Game.phase == 1 || Game.phase == 2) {
+			if(this.currentMarket.length < 4 || this.futureMarket.length < 4) {
+				var tempMarketArray = this.currentMarket.concat(this.futureMarket);
+				while(tempMarketArray.length < 8) {
+					if(this.deckCount() > 0) {
+						tempMarketArray = tempMarketArray.concat(this.drawCard());
+					}
+					else {
+						// Move into phase 3
+						this.p2p3Transition();
+						return;
+					}
 				}
-				else {
-					// I'm not sure how to do error catching in JS =D
-				}
+				
+				tempMarketArray.sort(function(a,b) {
+					return parseFloat(a.price) - parseFloat(b.price);
+				});
+				
+				this.currentMarket = tempMarketArray.splice(0,4);
+				this.futureMarket = tempMarketArray.splice(0,4);
+				console.log(this.currentMarket);
+				console.log(this.futureMarket);
 			}
-			
-			tempMarketArray.sort(function(a,b) {
-				return parseFloat(a.price) - parseFloat(b.price);
-			});
-			
-			this.currentMarket = tempMarketArray.splice(0,4);
-			this.futureMarket = tempMarketArray.splice(0,4);
-			console.log(this.currentMarket);
-			console.log(this.futureMarket);
+		}
+		else if(Game.phase == 3) {
+			// phase 3 market check go here
+			if(this.currentMarket.length < 6) {
+				while(this.currentMarket.length < 6) {
+					if(p3MarketDeckCount() > 0) {
+						this.currentMarket = this.currentMarket.concat(this.drawCard());
+					}
+					else {
+						// do nothing or exit out of this function
+						return;
+					}
+				}
+				
+				this.currentMarket.sort(function(a,b) {
+					return parseFloat(a.price) - parseFloat(b.price);
+				});
+				
+				console.log(this.currentMarket);
+			}
 		}
 	}
 	
